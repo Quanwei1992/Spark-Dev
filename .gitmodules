@@ -1,0 +1,3 @@
+[submodule "Spark/Extern/spdlog/spdlog"]
+	path = Spark/Extern/spdlog/spdlog
+	url = https://github.com/Quanwei1992/spdlog.git

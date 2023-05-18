@@ -1,9 +1,9 @@
 #include "Application.h"
-#include <iostream>
+#include "Log.h"
 namespace Spark
 {
 	void Application::Run()
 	{
-		std::cout << "Application::Run" << std::endl;
+		SP_CORE_TRACE("Application Run");
 	}
 }

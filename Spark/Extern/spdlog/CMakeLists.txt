@@ -1,0 +1,6 @@
+set(this spdlog)
+ucm_add_dirs(spdlog/include spdlog/src TO sources RECURSIVE FILTER_POP 1)
+add_library(${this} STATIC ${sources})
+target_include_directories(${this} PUBLIC spdlog/include)
+set_target_properties(${this} PROPERTIES FOLDER Extern)
+target_compile_definitions(${this} PRIVATE SPDLOG_COMPILED_LIB)
