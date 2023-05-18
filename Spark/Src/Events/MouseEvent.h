@@ -51,7 +51,7 @@ namespace Spark
 		float m_XOffsetX, m_YOffset;
 	};
 
-	class MouseButtonEvent final : public Event
+	class MouseButtonEvent  : public Event
 	{
 	public:
 		inline int GetMouseButton() const { return m_Button; }
