@@ -7,7 +7,7 @@ namespace Spark
 	int engine_main(int argc, const char** argv)
 	{
 		Log::Init();
-		Application* app = CreateApplication();
+		Application* app = CreateApplication({argc,argv});
 		app->Run();
 		delete app;
 		Log::Shutdown();
