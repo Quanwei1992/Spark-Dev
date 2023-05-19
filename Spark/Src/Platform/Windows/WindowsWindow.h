@@ -24,9 +24,11 @@ namespace Spark
 
 	private:
 		void Init(const WindowProps& props);
-		void Shutdown() const;
+		void Shutdown();
 
 		GLFWwindow* m_Window = nullptr;
+		GraphicsContext* m_Context = nullptr;
+
 		struct WindowData
 		{
 			std::string Title;

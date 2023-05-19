@@ -1,0 +1,5 @@
+set(this glad)
+ucm_add_dirs(include src TO sources RECURSIVE)
+add_library(${this} STATIC ${sources})
+target_include_directories(${this} PUBLIC include)
+set_target_properties(${this} PROPERTIES FOLDER Extern)
