@@ -4,6 +4,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Core/Log.h"
 #include "Core/Time.h"
+#include "Renderer/RenderCommand.h"
 
 #include <GLFW/glfw3.h>
 
@@ -12,31 +13,25 @@
 namespace Spark
 {
 
-
-
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application(const std::string& name, ApplicationCommandLineArgs args)
 		: m_Name(name)
 		, m_CommandLineArgs(args)
 	{
-		SP_ASSERT(!s_Instance, "Application already exsits!");
+		
+		SP_CORE_ASSERT(!s_Instance, "Application already exsits!");
 		s_Instance = this;
-
-		WindowProps windowProps;
-		windowProps.Title = name;
-		m_Window = Window::Create(windowProps);
-		m_Window->SetEventCallback(SP_BIND_EVENT(OnEvent));
+		Init();
 	}
 
 	Application::~Application()
 	{
-		delete m_Window;
+		Shutdown();
 	}
 
 	void Application::Run()
 	{
-
 		while(m_Running)
 		{
 			const float time = static_cast<float>(Time::GetRealtimeSinceStartup());
@@ -61,6 +56,25 @@ namespace Spark
 		layer->OnAttach();
 	}
 
+	void Application::Init()
+	{
+		SP_TRACE("Application::Init");
+		WindowProps windowProps;
+		windowProps.Title = m_Name;
+		m_Window = Window::Create(windowProps);
+		m_Window->SetEventCallback(SP_BIND_EVENT(OnEvent));
+
+		RenderCommand::Init();
+
+	}
+
+	void Application::Shutdown()
+	{
+		RenderCommand::Shutdown();
+		delete m_Window;
+		m_Window = nullptr;
+		SP_TRACE("Application::Shutdown");
+	}
 
 	void Application::OnEvent(Event& e)
 	{

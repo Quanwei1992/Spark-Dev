@@ -60,7 +60,7 @@ namespace Spark
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();
-			SP_ASSERT(success, "Could not initialize GLFW!");
+			SP_CORE_ASSERT(success, "Could not initialize GLFW!");
 			s_GLFWInitialized = true;
 		}
 		{

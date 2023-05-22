@@ -17,7 +17,7 @@ namespace Spark
 
 		const char* operator[](int index) const
 		{
-			SP_ASSERT(index < Count, "Out of range!");
+			SP_CORE_ASSERT(index < Count, "Out of range!");
 			return Args[index];
 		}
 	};
@@ -33,17 +33,16 @@ namespace Spark
 	public:
 		Application(const std::string& name = "Spark", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
-
 		void Run();
-
 		void PushLayer(Layer* layer);
 
 	private:
-
+		void Init();
+		void Shutdown();
 		void OnEvent(Event& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnWindowClosed(WindowCloseEvent& e);
-
+		std::string m_Name;
 		ApplicationCommandLineArgs m_CommandLineArgs;
 		Timestep m_Timestep;
 		bool m_Minimized = false;
@@ -51,9 +50,7 @@ namespace Spark
 		Window* m_Window;
 		bool m_Running = true;
 		static Application* s_Instance;
-		std::string m_Name;
 		std::vector<Layer*> m_Layers;
-
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args);

@@ -3,7 +3,7 @@
 #include <cassert>
 
 #if 1
-#define SP_ASSERT(...)  assert(__VA_ARGS__)
+#define SP_CORE_ASSERT(...)  assert(__VA_ARGS__)
 #else
-#define SP_ASSERT(...)
+#define SP_CORE_ASSERT(...)
 #endif

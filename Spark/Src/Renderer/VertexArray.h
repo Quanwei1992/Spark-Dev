@@ -21,4 +21,5 @@ namespace Spark
 
 		static Ref<VertexArray> Create();
 	};
+
 }
