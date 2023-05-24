@@ -44,6 +44,9 @@ namespace Spark
 
 		m_UnlitColorShader = Shader::Create("Assets/Shaders/UnlitColor.glsl");
 		m_UnlitColorShader->SetVector4("u_Color", { 0.2f,0.8f,0.3f,1 });
+
+		auto mesh = CreateRef<Mesh>("Assets/Models/Armature.fbx");
+
 	}
 
 	void SandBoxLayer::OnDetach()

@@ -58,7 +58,7 @@ namespace Spark
 
 	void Application::Init()
 	{
-		SP_TRACE("Application::Init");
+		SP_CORE_TRACE("Application::Init");
 		WindowProps windowProps;
 		windowProps.Title = m_Name;
 		m_Window = Window::Create(windowProps);

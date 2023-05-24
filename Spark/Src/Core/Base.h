@@ -4,6 +4,10 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
+#include <set>
+#include <filesystem>
+#include <unordered_map>
 
 #define BIT(x) (1 << x)
 
@@ -28,7 +32,7 @@ namespace Spark
 
 #include "Core/Log.h"
 #include "Core/Assert.h"
-#include "Core/Math.h"
+#include "Math/Math.h"
 
 
 

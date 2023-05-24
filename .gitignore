@@ -1,1 +1,4 @@
 Build
+Spark/Libs/archive_*
+Spark/Libs/*.7z
+logs

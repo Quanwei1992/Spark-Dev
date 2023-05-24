@@ -31,4 +31,19 @@ namespace Spark
 
 	typedef glm::mat3 Mat3;
 	typedef glm::mat4 Mat4;
+
+	typedef glm::quat Quat;
 }
+
+
+namespace Spark
+{
+	class Math
+	{
+	public:
+		static bool DecomposeTransform(const Mat4& transform, Vector3& translation, Quat& rotation, Vector3& scale);
+	};
+}
+
+
+#include "Math/AABB.h"

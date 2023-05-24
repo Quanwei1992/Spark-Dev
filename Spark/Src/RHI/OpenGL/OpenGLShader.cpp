@@ -26,7 +26,7 @@ namespace Spark
 				is.close();
 			}
 			else {
-				SP_CORE_ERROR("Count not open file '{0}'", filePath);
+				SP_CORE_ERROR("Count not open file '{0}'", filePath.string());
 			}
 			return result;
 		}
