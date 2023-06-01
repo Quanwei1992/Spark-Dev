@@ -21,9 +21,9 @@ namespace Spark
 		{
 			s_CurrentRendererAPI->Clear();
 		}
-		static void DrawIndexed(int count)
+		static void DrawIndexed(uint32_t indexCount,uint32_t firstIndex = 0,uint32_t vertexOffset = 0)
 		{
-			s_CurrentRendererAPI->DrawIndexed(count);
+			s_CurrentRendererAPI->DrawIndexed(indexCount,firstIndex,vertexOffset);
 		}
 
 	private:

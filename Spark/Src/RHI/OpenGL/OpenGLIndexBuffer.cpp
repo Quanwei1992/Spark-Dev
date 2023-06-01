@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 namespace Spark
 {
-	OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, uint32_t size)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(const void* indices, uint32_t size)
 		:m_Size(size)
 	{
 		glCreateBuffers(1, &m_RendererID);

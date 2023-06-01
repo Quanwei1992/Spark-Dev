@@ -25,14 +25,14 @@ inline OStream& operator<<(OStream& os, glm::qua<T, Q> quaternion)
 
 namespace Spark
 {
-	typedef glm::vec2 Vector2;
-	typedef glm::vec3 Vector3;
-	typedef glm::vec4 Vector4;
+	using Vector2 = glm::vec2;
+	using Vector3 = glm::vec3;
+	using Vector4 = glm::vec4;
 
-	typedef glm::mat3 Mat3;
-	typedef glm::mat4 Mat4;
+	using Mat3 = glm::mat3;
+	using Mat4 = glm::mat4;
 
-	typedef glm::quat Quat;
+	using Quat = glm::quat;
 }
 
 
@@ -42,8 +42,11 @@ namespace Spark
 	{
 	public:
 		static bool DecomposeTransform(const Mat4& transform, Vector3& translation, Quat& rotation, Vector3& scale);
+		static Vector3 Rotate(const Quat& quat, const Vector3& v);
+		static Vector3 GetRayPlaneIntersection(Vector3 rayOrigin, Vector3 rayDirection, Vector3 planeNormal, float planeDistance);
 	};
 }
+
 
 
 #include "Math/AABB.h"

@@ -67,10 +67,17 @@ namespace Spark
 	class Mesh
 	{
 	public:
+		Mesh() = default;
 		Mesh(const std::filesystem::path& filepath);
 		~Mesh();
 
 		bool HasSkeleton() const { return m_Skeleton != nullptr; }
+		const auto& GetSubmeshs() const { return m_Submeshes; }
+		const auto& GetVertices() const { return m_Vertices; }
+		const auto& GetIndices() const { return m_Indices; }
+
+	public:
+		static Ref<Mesh> CreateQubeMesh();
 
 	private:
 		void TraverseNodes(void* assimpNode, uint32_t nodeIndex, const Mat4& parentTransform = Mat4(1.0f), uint32_t level = 0);

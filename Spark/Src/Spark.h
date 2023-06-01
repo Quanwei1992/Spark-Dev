@@ -12,3 +12,8 @@
 #include "Renderer/IndexBuffer.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Mesh.h"
+#include "Renderer/Camera.h"
+#include "Renderer/EditorCamera.h"
+#include "Renderer/MeshRenderer.h"
+
+#include "Input/Input.h"

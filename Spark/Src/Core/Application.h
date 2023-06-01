@@ -36,6 +36,9 @@ namespace Spark
 		void Run();
 		void PushLayer(Layer* layer);
 
+		Window& GetWindow() const { return *m_Window; }
+		static Application& Get() { return *s_Instance; }
+
 	private:
 		void Init();
 		void Shutdown();

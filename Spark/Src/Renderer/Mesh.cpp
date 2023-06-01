@@ -82,10 +82,10 @@ namespace Spark
 
 	void BoneHierarchy::ExtractBones()
 	{
-		for (uint32_t meshIndex =0;meshIndex<m_Scene->mNumMeshes;++meshIndex)
+		for (uint32_t meshIndex = 0; meshIndex < m_Scene->mNumMeshes; ++meshIndex)
 		{
 			const aiMesh* mesh = m_Scene->mMeshes[meshIndex];
-			for (uint32_t boneIndex = 0;boneIndex<mesh->mNumBones;++boneIndex)
+			for (uint32_t boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 			{
 				m_Bones.emplace(mesh->mBones[boneIndex]->mName.C_Str());
 			}
@@ -95,13 +95,13 @@ namespace Spark
 	void BoneHierarchy::TraverseNode(const aiNode* node, Skeleton* skeleton)
 	{
 		SP_TRACE(node->mName.C_Str());
-		if(m_Bones.find(node->mName.C_Str()) != m_Bones.end())
+		if (m_Bones.find(node->mName.C_Str()) != m_Bones.end())
 		{
 			TraverseBone(node, skeleton, Skeleton::NullIndex);
 		}
 		else
 		{
-			for (uint32_t nodeIndex = 0;nodeIndex<node->mNumChildren;++nodeIndex)
+			for (uint32_t nodeIndex = 0; nodeIndex < node->mNumChildren; ++nodeIndex)
 			{
 				TraverseNode(node->mChildren[nodeIndex], skeleton);
 			}
@@ -111,7 +111,7 @@ namespace Spark
 	void BoneHierarchy::TraverseBone(const aiNode* node, Skeleton* skeleton, uint32_t parentIndex)
 	{
 		const uint32_t boneIndex = skeleton->AddBone(node->mName.C_Str(), parentIndex, Utils::Mat4FromAIMatrix4x4(node->mTransformation));
-		for (uint32_t nodeIndex = 0;nodeIndex < node->mNumChildren; ++nodeIndex)
+		for (uint32_t nodeIndex = 0; nodeIndex < node->mNumChildren; ++nodeIndex)
 		{
 			TraverseBone(node->mChildren[nodeIndex], skeleton, boneIndex);
 		}
@@ -128,10 +128,10 @@ namespace Spark
 	{
 		std::vector<std::string> animationNames;
 		animationNames.reserve(scene->mNumAnimations);
-		for (size_t i = 0;i < scene->mNumAnimations;++i)
+		for (size_t i = 0; i < scene->mNumAnimations; ++i)
 		{
 			const auto animation = scene->mAnimations[i];
-			if(animation->mDuration<=0.0f)
+			if (animation->mDuration <= 0.0f)
 			{
 				SP_MESH_WARN("Animation '{0}' duration is zero or negative. This animation was ignored!", animation->mName.C_Str());
 				continue;
@@ -147,7 +147,7 @@ namespace Spark
 	{
 		float FrameTime;
 		T Value;
-		KeyFrame(float frameTime,const T& value) : FrameTime(frameTime),Value(value){}
+		KeyFrame(float frameTime, const T& value) : FrameTime(frameTime), Value(value) {}
 	};
 
 	struct Channel
@@ -159,7 +159,7 @@ namespace Spark
 	};
 
 
-	static auto ImportChannels(const aiAnimation* anim,const Skeleton* skeleton)
+	static auto ImportChannels(const aiAnimation* anim, const Skeleton* skeleton)
 	{
 		std::vector<Channel> channels;
 
@@ -170,21 +170,21 @@ namespace Spark
 		}
 
 		std::map<uint32_t, aiNodeAnim*> validChannels;
-		for (uint32_t channelIndex = 0;channelIndex < anim->mNumChannels;++channelIndex)
+		for (uint32_t channelIndex = 0; channelIndex < anim->mNumChannels; ++channelIndex)
 		{
 			aiNodeAnim* nodeAnim = anim->mChannels[channelIndex];
-			if(auto it = boneIndices.find(nodeAnim->mNodeName.C_Str()); it != boneIndices.end())
+			if (auto it = boneIndices.find(nodeAnim->mNodeName.C_Str()); it != boneIndices.end())
 			{
 				validChannels.emplace(it->second, nodeAnim);
 			}
 		}
 		channels.resize(skeleton->GetNumBones());
-		for (uint32_t boneIndex = 0;boneIndex<skeleton->GetNumBones();++boneIndex)
+		for (uint32_t boneIndex = 0; boneIndex < skeleton->GetNumBones(); ++boneIndex)
 		{
 			Channel& channel = channels[boneIndex];
 			channel.Index = boneIndex;
 			auto validChannel = validChannels.find(boneIndex);
-			if(validChannel == validChannels.end())
+			if (validChannel == validChannels.end())
 			{
 				SP_MESH_WARN("No animations tracks found for bone '{}'", skeleton->GetBoneName(boneIndex));
 				channel.Translations = { {0.0f, glm::vec3{0.0f}}, {1.0f, glm::vec3{0.0f}} };
@@ -259,7 +259,7 @@ namespace Spark
 				if (channel.Scales.empty())
 				{
 					SP_MESH_WARN("No scale tracks found for bone '{}'", skeleton->GetBoneName(boneIndex));
-					channel.Scales = { {0.0f, Vector3{1.0f}},  {1.0f, Vector3{1.0f}}};
+					channel.Scales = { {0.0f, Vector3{1.0f}},  {1.0f, Vector3{1.0f}} };
 				}
 				else if (channel.Scales.back().FrameTime < 1.0f)
 				{
@@ -277,7 +277,7 @@ namespace Spark
 		uint32_t numRotations = 0;
 		uint32_t numScales = 0;
 
-		for(const auto& channel :channels)
+		for (const auto& channel : channels)
 		{
 			numTranslations += channel.Translations.size();
 			numRotations += channel.Rotations.size();
@@ -291,7 +291,7 @@ namespace Spark
 		for (const auto& channel : channels)
 		{
 			float prevFrameTime = -1.0f;
-			for (const auto & translation : channel.Translations)
+			for (const auto& translation : channel.Translations)
 			{
 				translationKeysTemp.emplace_back(prevFrameTime, TranslationKey{ translation.FrameTime,channel.Index,translation.Value });
 				prevFrameTime = translation.FrameTime;
@@ -313,25 +313,25 @@ namespace Spark
 		}
 
 		std::sort(translationKeysTemp.begin(), translationKeysTemp.end(), [](const auto& a, const auto& b)
-		{
-			return (a.first < b.first) || ((a.first == b.first) && a.second.Track < b.second.Track);
-		});
+			{
+				return (a.first < b.first) || ((a.first == b.first) && a.second.Track < b.second.Track);
+			});
 
 		std::sort(rotationKeysTemp.begin(), rotationKeysTemp.end(), [](const auto& a, const auto& b)
-		{
-			return (a.first < b.first) || ((a.first == b.first) && a.second.Track < b.second.Track);
-		});
+			{
+				return (a.first < b.first) || ((a.first == b.first) && a.second.Track < b.second.Track);
+			});
 
 		std::sort(rotationKeysTemp.begin(), rotationKeysTemp.end(), [](const auto& a, const auto& b)
-		{
-			return (a.first < b.first) || ((a.first == b.first) && a.second.Track < b.second.Track);
-		});
+			{
+				return (a.first < b.first) || ((a.first == b.first) && a.second.Track < b.second.Track);
+			});
 
 		return std::tuple{ translationKeysTemp,rotationKeysTemp,scaleKeysTemp };
 	}
 
 	static auto ExtractKeys(const std::vector<std::pair<float, TranslationKey>>& translationKeysTemp,
-		const std::vector<std::pair<float, RotationKey>>& rotationKeysTemp, 
+		const std::vector<std::pair<float, RotationKey>>& rotationKeysTemp,
 		const std::vector<std::pair<float, ScaleKey>>& scaleKeysTemp)
 	{
 		std::vector<TranslationKey> translationKeys;
@@ -342,7 +342,7 @@ namespace Spark
 		rotationKeys.reserve(rotationKeysTemp.size());
 		scaleKeys.reserve(scaleKeysTemp.size());
 
-		for(const auto& translation : translationKeysTemp)
+		for (const auto& translation : translationKeysTemp)
 		{
 			translationKeys.emplace_back(translation.second);
 		}
@@ -354,17 +354,17 @@ namespace Spark
 		{
 			scaleKeys.emplace_back(scale.second);
 		}
-		return std::tuple{ translationKeys,rotationKeys,scaleKeys};
+		return std::tuple{ translationKeys,rotationKeys,scaleKeys };
 	}
 
 
-	Animation* ImportAnimation(const aiScene* scene, const std::string& animationName,const Skeleton* skeleton)
+	Animation* ImportAnimation(const aiScene* scene, const std::string& animationName, const Skeleton* skeleton)
 	{
 		Animation* animation = nullptr;
-		for(uint32_t animIndex =0;animIndex<scene->mNumAnimations;++animIndex)
+		for (uint32_t animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex)
 		{
 			const auto anim = scene->mAnimations[animIndex];
-			if(animationName != anim->mName.C_Str())
+			if (animationName != anim->mName.C_Str())
 			{
 				continue;
 			}
@@ -374,7 +374,7 @@ namespace Spark
 			auto [translationKeys, rotationKeys, scaleKeys] = ExtractKeys(translationKeysTemp, rotationKeysTemp, scaleKeysTemp);
 
 			double samplingRate = anim->mTicksPerSecond;
-			if(samplingRate < 0.00001)
+			if (samplingRate < 0.00001)
 			{
 				samplingRate = 1.0f;
 			}
@@ -388,16 +388,16 @@ namespace Spark
 
 	void BoneInfluence::AddBoneData(uint32_t boneInfoIndex, float weight)
 	{
-		if(weight < 0.0f || weight > 1.0f)
+		if (weight < 0.0f || weight > 1.0f)
 		{
 			SP_MESH_WARN("Vertex bone weight is out of range. we will clamp it to [0,1] (BoneID={0},Weight={1})", boneInfoIndex, weight);
 			weight = std::clamp(weight, 0.0f, 1.0f);
 		}
-		if(weight > 0.0f)
+		if (weight > 0.0f)
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				if(Weights[i] == 0.0f)
+				if (Weights[i] == 0.0f)
 				{
 					BoneInfoIndices[i] = boneInfoIndex;
 					Weights[i] = weight;
@@ -415,9 +415,9 @@ namespace Spark
 		{
 			sumWeights += Weights[i];
 		}
-		if(sumWeights > 0.0f)
+		if (sumWeights > 0.0f)
 		{
-			for (int i = 0;i<4;i++)
+			for (int i = 0; i < 4; i++)
 			{
 				Weights[i] /= sumWeights;
 			}
@@ -431,7 +431,7 @@ namespace Spark
 
 		const aiScene* scene = importer.ReadFile(filepath.string(), s_MeshImportFlags);
 
-		if(scene == nullptr)
+		if (scene == nullptr)
 		{
 			SP_MESH_ERROR("Failed to load mesh file: {0}", filepath.string());
 			return;
@@ -439,7 +439,7 @@ namespace Spark
 
 		m_Skeleton = ImportSkeleton(scene);
 		SP_MESH_LOG("Skeleton {0} found in mesh file {1}", HasSkeleton() ? "" : "not", filepath.string());
-		if(HasSkeleton())
+		if (HasSkeleton())
 		{
 			const auto& animationNames = GetAnimationNames(scene);
 			m_Animations.reserve(animationNames.size());
@@ -451,7 +451,7 @@ namespace Spark
 		}
 		// Meshes
 
-		if(scene->HasMeshes())
+		if (scene->HasMeshes())
 		{
 			uint32_t vertexCount = 0;
 			uint32_t indexCount = 0;
@@ -460,7 +460,7 @@ namespace Spark
 			m_BoundingBox.Max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };
 			m_Submeshes.reserve(scene->mNumMeshes);
 
-			for (unsigned m = 0; m<scene->mNumMeshes;m++)
+			for (unsigned m = 0; m < scene->mNumMeshes; m++)
 			{
 				aiMesh* mesh = scene->mMeshes[m];
 				Submesh& submesh = m_Submeshes.emplace_back();
@@ -481,7 +481,7 @@ namespace Spark
 				aabb.Min = { FLT_MAX,FLT_MAX,FLT_MAX };
 				aabb.Max = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };
 				m_Vertices.reserve(mesh->mNumVertices);
-				for (unsigned i =0;i<mesh->mNumVertices;i++)
+				for (unsigned i = 0; i < mesh->mNumVertices; i++)
 				{
 					Vertex& vertex = m_Vertices.emplace_back();
 					vertex.Position = { mesh->mVertices[i].x,mesh->mVertices[i].y,mesh->mVertices[i].z };
@@ -493,13 +493,13 @@ namespace Spark
 					aabb.Max.y = glm::max(vertex.Position.y, aabb.Max.y);
 					aabb.Max.z = glm::max(vertex.Position.z, aabb.Max.z);
 
-					if(mesh->HasTangentsAndBitangents())
+					if (mesh->HasTangentsAndBitangents())
 					{
 						vertex.Tangent = { mesh->mTangents[i].x,mesh->mTangents[i].y ,mesh->mTangents[i].z };
-						vertex.Binormal = { mesh->mBitangents[i].x,mesh->mBitangents[i].y, mesh->mBitangents[i].z};
+						vertex.Binormal = { mesh->mBitangents[i].x,mesh->mBitangents[i].y, mesh->mBitangents[i].z };
 					}
 
-					if(mesh->HasTextureCoords(0))
+					if (mesh->HasTextureCoords(0))
 					{
 						vertex.Texcoord = { mesh->mTextureCoords[0][i].x,mesh->mTextureCoords[0][i].y };
 					}
@@ -507,7 +507,7 @@ namespace Spark
 
 				// Indices
 				m_Indices.reserve(mesh->mNumFaces);
-				for (unsigned i =0;i<mesh->mNumFaces;i++)
+				for (unsigned i = 0; i < mesh->mNumFaces; i++)
 				{
 					SP_CORE_ASSERT(mesh->mFaces[i].mNumIndices == 3, "Must have 3 indices.");
 					Index& index = m_Indices.emplace_back();
@@ -536,10 +536,10 @@ namespace Spark
 
 		// Bones
 
-		if(HasSkeleton())
+		if (HasSkeleton())
 		{
 			m_BoneInfluences.resize(m_Vertices.size());
-			for(uint32_t m =0;m<scene->mNumMeshes;m++)
+			for (uint32_t m = 0; m < scene->mNumMeshes; m++)
 			{
 				const aiMesh* mesh = scene->mMeshes[m];
 				Submesh& submesh = m_Submeshes[m];
@@ -547,13 +547,13 @@ namespace Spark
 				if (mesh->mNumBones == 0) continue;
 
 				submesh.IsRigged = true;
-				for (uint32_t i = 0;i<mesh->mNumBones;i++)
+				for (uint32_t i = 0; i < mesh->mNumBones; i++)
 				{
 					const aiBone* bone = mesh->mBones[i];
 					bool hasNonZeroWeight = false;
 					for (int j = 0; j < bone->mNumWeights; ++j)
 					{
-						if(bone->mWeights[j].mWeight > 0.000001f)
+						if (bone->mWeights[j].mWeight > 0.000001f)
 						{
 							hasNonZeroWeight = true;
 						}
@@ -562,29 +562,29 @@ namespace Spark
 
 					// Find bone in skeleton
 					uint32_t boneIndex = m_Skeleton->GetBoneIndex(bone->mName.C_Str());
-					if(boneIndex == Skeleton::NullIndex)
+					if (boneIndex == Skeleton::NullIndex)
 					{
 						SP_CORE_ERROR_TAG("Animation", "Could not find mesh bone '{}' in skeleton!", bone->mName.C_Str());
 						continue;
 					}
 					uint32_t boneInfoIndex = ~0;
-					for (size_t j =0;j<m_BoneInfo.size();++j)
+					for (size_t j = 0; j < m_BoneInfo.size(); ++j)
 					{
 						const auto& boneInfo = m_BoneInfo[j];
-						if(boneInfo.BoneIndex == boneIndex && boneInfo.SubMeshIndex == m)
+						if (boneInfo.BoneIndex == boneIndex && boneInfo.SubMeshIndex == m)
 						{
 							boneInfoIndex = static_cast<uint32_t>(j);
 							break;
 						}
 					}
 
-					if(boneInfoIndex == ~0)
+					if (boneInfoIndex == ~0)
 					{
 						boneInfoIndex = static_cast<uint32_t>(m_BoneInfo.size());
 						m_BoneInfo.emplace_back(glm::inverse(submesh.Transform), Utils::Mat4FromAIMatrix4x4(bone->mOffsetMatrix), m, boneIndex);
 					}
 
-					for (size_t j=0;j<bone->mNumWeights;j++)
+					for (size_t j = 0; j < bone->mNumWeights; j++)
 					{
 						int vertexId = submesh.BaseVertex + bone->mWeights[j].mVertexId;
 						float weight = bone->mWeights[j].mWeight;
@@ -604,7 +604,7 @@ namespace Spark
 
 	Mesh::~Mesh()
 	{
-		if(m_Skeleton)
+		if (m_Skeleton)
 		{
 			delete m_Skeleton;
 			m_Skeleton = nullptr;
@@ -616,6 +616,7 @@ namespace Spark
 		}
 		m_Animations.clear();
 	}
+
 
 	void Mesh::TraverseNodes(void* assimpNode, const uint32_t nodeIndex, const Mat4& parentTransform, uint32_t level)
 	{
@@ -639,7 +640,7 @@ namespace Spark
 
 		const uint32_t parentNodeIndex = m_Nodes.size() - 1;
 		node.Children.resize(aNode->mNumChildren);
-		for (uint32_t i = 0;i<aNode->mNumChildren;i++)
+		for (uint32_t i = 0; i < aNode->mNumChildren; i++)
 		{
 			MeshNode& child = m_Nodes.emplace_back();
 			const uint32_t childIndex = m_Nodes.size() - 1;
@@ -647,6 +648,77 @@ namespace Spark
 			m_Nodes[nodeIndex].Children[i] = childIndex;
 			TraverseNodes(aNode->mChildren[i], childIndex, transform, level + 1);
 		}
-
 	}
+
+
+	Ref<Mesh> Mesh::CreateQubeMesh()
+	{
+		Ref<Mesh> mesh = CreateRef<Mesh>();
+		mesh->m_Vertices = {
+			{{-0.5f, -0.5f, -0.5f},  {0.0f,  0.0f, -1.0f}},
+			{{ 0.5f, -0.5f, -0.5f},  {0.0f,  0.0f, -1.0f}},
+			{{ 0.5f,  0.5f, -0.5f},  {0.0f,  0.0f, -1.0f}},
+			{{ 0.5f,  0.5f, -0.5f},  {0.0f,  0.0f, -1.0f}},
+			{{-0.5f,  0.5f, -0.5f},  {0.0f,  0.0f, -1.0f}},
+			{{-0.5f, -0.5f, -0.5f},  {0.0f,  0.0f, -1.0f}},
+			{{-0.5f, -0.5f,  0.5f},  {0.0f,  0.0f, 1.0f,}},
+			{{ 0.5f, -0.5f,  0.5f},  {0.0f,  0.0f, 1.0f,}},
+			{{ 0.5f,  0.5f,  0.5f},  {0.0f,  0.0f, 1.0f,}},
+			{{ 0.5f,  0.5f,  0.5f},  {0.0f,  0.0f, 1.0f,}},
+			{{-0.5f,  0.5f,  0.5f},  {0.0f,  0.0f, 1.0f,}},
+			{{-0.5f, -0.5f,  0.5f},  {0.0f,  0.0f, 1.0f,}},
+			{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+			{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+			{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+			{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+			{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+			{{ 0.5f,  0.5f,  0.5f},  {1.0f,  0.0f,  0.0f}},
+			{{ 0.5f,  0.5f, -0.5f},  {1.0f,  0.0f,  0.0f}},
+			{{ 0.5f, -0.5f, -0.5f},  {1.0f,  0.0f,  0.0f}},
+			{{ 0.5f, -0.5f, -0.5f},  {1.0f,  0.0f,  0.0f}},
+			{{ 0.5f, -0.5f,  0.5f},  {1.0f,  0.0f,  0.0f}},
+			{{ 0.5f,  0.5f,  0.5f},  {1.0f,  0.0f,  0.0f}},
+			{{-0.5f, -0.5f, -0.5f},  {0.0f, -1.0f,  0.0f}},
+			{{ 0.5f, -0.5f, -0.5f},  {0.0f, -1.0f,  0.0f}},
+			{{ 0.5f, -0.5f,  0.5f},  {0.0f, -1.0f,  0.0f}},
+			{{ 0.5f, -0.5f,  0.5f},  {0.0f, -1.0f,  0.0f}},
+			{{-0.5f, -0.5f,  0.5f},  {0.0f, -1.0f,  0.0f}},
+			{{-0.5f, -0.5f, -0.5f},  {0.0f, -1.0f,  0.0f}},
+			{{-0.5f,  0.5f, -0.5f},  {0.0f,  1.0f,  0.0f}},
+			{{ 0.5f,  0.5f, -0.5f},  {0.0f,  1.0f,  0.0f}},
+			{{ 0.5f,  0.5f,  0.5f},  {0.0f,  1.0f,  0.0f}},
+			{{ 0.5f,  0.5f,  0.5f},  {0.0f,  1.0f,  0.0f}},
+			{{-0.5f,  0.5f,  0.5f},  {0.0f,  1.0f,  0.0f}},
+			{{-0.5f,  0.5f, -0.5f},  {0.0f,  1.0f,  0.0f}}
+		};
+
+		mesh->m_Indices = {
+			{0,1,2},
+			{3,4,5},
+			{6,7,8},
+			{9,10,11},
+			{12,13,14},
+			{15,16,17},
+			{18,19,20},
+			{21,22,23},
+			{24,25,26},
+			{27,28,29},
+			{30,31,32},
+			{33,34,35},
+		};
+
+		Submesh submesh;
+		submesh.Transform = Mat4(1.0f);
+		submesh.LocalTransform = Mat4(1.0f);
+		submesh.BaseIndex = 0;
+		submesh.BaseVertex = 0;
+		submesh.IndexCount = 36;
+		submesh.MeshName = "Qube";
+		submesh.NodeName = "Root";
+		mesh->m_Submeshes.emplace_back(submesh);
+
+		return mesh;
+	}
+
 }

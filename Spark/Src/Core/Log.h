@@ -145,10 +145,7 @@ namespace Spark
 		auto logger = (type == Type::Core) ? GetCoreLogger() : GetClientLogger();
 		logger->error("{0}: {1}", prefix, fmt::format(std::forward<Args>(args)...));
 
-#if HZ_ASSERT_MESSAGE_BOX
-		std::string message = fmt::format(std::forward<Args>(args)...);
-		MessageBoxA(nullptr, message.c_str(), "Hazel Assert", MB_OK | MB_ICONERROR);
-#endif
+
 	}
 
 	template<>
@@ -156,8 +153,5 @@ namespace Spark
 	{
 		auto logger = (type == Type::Core) ? GetCoreLogger() : GetClientLogger();
 		logger->error("{0}", prefix);
-#if HZ_ASSERT_MESSAGE_BOX
-		MessageBoxA(nullptr, "No message :(", "Hazel Assert", MB_OK | MB_ICONERROR);
-#endif
 	}
 }

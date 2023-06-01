@@ -4,7 +4,7 @@
 
 namespace Spark
 {
-	Ref<IndexBuffer> IndexBuffer::Create(const uint32_t* indices, uint32_t size)
+	Ref<IndexBuffer> IndexBuffer::Create(const void* indices, uint32_t size)
 	{
 		if (RendererAPI::Current() == RendererAPIType::OpenGL)
 		{

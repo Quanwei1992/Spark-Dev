@@ -61,8 +61,9 @@ namespace Spark
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(int count)
+	void OpenGLRendererAPI::DrawIndexed(uint32_t indexCount, uint32_t firstIndex, uint32_t vertexOffset)
 	{
-		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+		const void* indicesOffset = reinterpret_cast<void*>(sizeof(uint32_t) * firstIndex);
+		glDrawElementsBaseVertex(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indicesOffset, vertexOffset);
 	}
 }
