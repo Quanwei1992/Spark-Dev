@@ -14,8 +14,8 @@ namespace Spark
 		void OnEvent(Event& event) override;
 
 	private:
-		Ref<VertexArray> m_VertexArray;
-		Ref<Shader> m_UnlitColorShader;
+		Ref<VertexArray> m_QuadVertexArray;
+		Ref<Shader> m_GridShader;
 		Ref<Shader> m_LightingShader;
 		EditorCamera m_EditorCamera;
 			

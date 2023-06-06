@@ -177,7 +177,7 @@ namespace Spark
 
 	float EditorCamera::ZoomSpeed() const
 	{
-		return GetDistance() / 2.0f;
+		return GetDistance() / 0.5f;
 	}
 
 	void EditorCamera::MouseRotate(const Vector2& delta)

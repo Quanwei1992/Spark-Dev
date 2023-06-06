@@ -17,26 +17,29 @@ namespace Spark
 
 	void SandBoxLayer::OnAttach()
 	{
-		RenderCommand::SetClearColor(0.2f, 0.2f, 0.2f);
-		constexpr float vertices[] = {
-			-0.5f,-0.5f,0.0f,
-			0.5f,-0.5f,0.0f,
-			0.0f,0.5f,0.0f
+		RenderCommand::SetClearColor(0.0f, 0.0f, 0.0f);
+		constexpr  float quadVertices[] = {
+			 -1, -1, 0,
+			 1, -1, 0,
+			 1,  1, 0,
+			-1,  1, 0
 		};
-		const auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+
+		int size = sizeof(quadVertices);
+
+		const auto vertexBuffer = VertexBuffer::Create(quadVertices, sizeof(quadVertices));
 		vertexBuffer->SetLayout({
 			{ShaderDataType::Float3,"a_Position"}
 		});
 
-		constexpr uint32_t indices[] = { 0,1,2 };
+		constexpr uint32_t indices[] = { 0,1,2,2,3,0 };
 		const auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices));
 
-		m_VertexArray = VertexArray::Create();
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
-		m_VertexArray->SetIndexBuffer(indexBuffer);
+		m_QuadVertexArray = VertexArray::Create();
+		m_QuadVertexArray->AddVertexBuffer(vertexBuffer);
+		m_QuadVertexArray->SetIndexBuffer(indexBuffer);
 
-		m_UnlitColorShader = Shader::Create("Assets/Shaders/UnlitColor.glsl");
-		m_UnlitColorShader->SetVector4("u_Color", { 0.2f,0.8f,0.3f,1 });
+		m_GridShader = Shader::Create("Assets/Shaders/Grid.glsl");
 
 		m_LightingShader = Shader::Create("Assets/Shaders/PhoneLighting_Color.glsl");
 		m_LightingShader->SetVector3("u_ObjectColor", { 1.0f, 1.0f, 1.0f });
@@ -71,6 +74,19 @@ namespace Spark
 		m_LightingShader->SetMat4("u_Projection", m_EditorCamera.GetProjectionMatrix());
 
 		m_NanosuitMeshRenderer->Draw(m_ModelMatrix, m_LightingShader);
+
+		// Draw Grid
+		m_GridShader->Bind();
+		const auto& viewProj = m_EditorCamera.GetProjectionMatrix() * m_EditorCamera.GetViewMatrix();
+		const auto& inversedViewProj = glm::inverse(viewProj);
+
+		m_GridShader->SetMat4("u_InversedViewProjection", inversedViewProj);
+		m_GridShader->SetMat4("u_ViewProjection", viewProj);
+		m_GridShader->SetFloat("u_LineWidth", 2.0f);
+		m_GridShader->SetFloat("u_CameraDistance", abs(m_EditorCamera.GetPosition().y));
+		m_QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(6);
+
 	}
 
 

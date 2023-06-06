@@ -25,6 +25,7 @@ namespace Spark
 
 		const Mat4& GetViewMatrix() const;
 		void SetPosition(const Vector3& position);
+		const Vector3& GetPosition() const { return m_Position; }
 
 		void Focus(const Vector3& focusPoint);
 
